@@ -17,10 +17,10 @@ This example demonstrates how to extract text from images and PDF documents usin
 ## Getting Started
 
 ### Adding Input Files
-
+F
 1. Navigate to the `Examples` directory:
    ```
-   IronOCR_Demos/Demos/SimpleReading/Examples/
+   IronOCR-FDemos/Demos/SimpleReading/Examples/
    ```
 
 2. Add your test files:

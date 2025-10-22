@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Demos\SimpleReading\SIMPLEREADING.md" />
+    <Compile Include="Demos\SimpleReading\README.md" />
   </ItemGroup>
 
   <ItemGroup>

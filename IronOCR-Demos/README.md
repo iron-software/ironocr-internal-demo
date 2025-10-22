@@ -9,7 +9,7 @@ This repository contains demonstration projects that highlight IronOCR's key fea
 ## Repository Structure
 
 ```
-IronOCR_Demos/
+IronOCR-Demos/
 ├── Demos/
 │   └── SimpleReading/          # OCR reading demonstrations
 │       ├── Examples/           # Input files directory
@@ -33,7 +33,7 @@ IronOCR_Demos/
 1. **Clone the repository**
    ```bash
    git clone [repository-url]
-   cd IronOCR_Demos
+   cd IronOCR-Demos
    ```
 
 2. **Configure your license**
