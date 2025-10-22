@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Demos\SimpleReading\SIMPLEREADING.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="IronOcr" Version="2025.9.7" />
     <PackageReference Include="IronPdf" Version="2025.9.4" />
   </ItemGroup>

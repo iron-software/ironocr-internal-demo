@@ -9,14 +9,14 @@ namespace IronOCR_Demos.Controllers
 {
     public class FileSelectorCliController
     {
-        private readonly PDFReadingDemo _pdfReadingDemo;
+        private readonly OcrReadingDemo _ocrReadingDemo;
         private readonly string[] _supportedImageExtensions = { ".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif" };
         private readonly string[] _supportedPdfExtensions = { ".pdf" };
         private readonly string _inputDirectory;
 
         public FileSelectorCliController(string inputDirectory = "InputFiles")
         {
-            _pdfReadingDemo = new PDFReadingDemo();
+            _ocrReadingDemo = new OcrReadingDemo();
             _inputDirectory = Path.IsPathRooted(inputDirectory)
                 ? inputDirectory
                 : Path.Combine(Directory.GetCurrentDirectory(), inputDirectory);
@@ -143,11 +143,11 @@ namespace IronOCR_Demos.Controllers
                 if (IsPdfFile(filePath))
                 {
                     var pdfDocument = PdfDocument.FromFile(filePath);
-                    result = _pdfReadingDemo.ReadPdf(pdfDocument, null, false);
+                    result = _ocrReadingDemo.ReadPdf(pdfDocument, null, false);
                 }
                 else
                 {
-                    result = _pdfReadingDemo.ReadImageFromDrawingImageWithRegionSelection(filePath, null);
+                    result = _ocrReadingDemo.ReadImageFromDrawingImageWithRegionSelection(filePath, null);
                 }
 
                 Console.WriteLine("OCR processing completed!");
@@ -157,9 +157,9 @@ namespace IronOCR_Demos.Controllers
                 string outputPath = Directory.GetCurrentDirectory();
                 string outputFileName = Path.GetFileNameWithoutExtension(filePath);
 
-                if (outputType.Value == PDFReadingDemo.OutputTypes.JSON ||
-                    outputType.Value == PDFReadingDemo.OutputTypes.SearchablePDF ||
-                    outputType.Value == PDFReadingDemo.OutputTypes.TextFile)
+                if (outputType.Value == OcrReadingDemo.OutputTypes.JSON ||
+                    outputType.Value == OcrReadingDemo.OutputTypes.SearchablePDF ||
+                    outputType.Value == OcrReadingDemo.OutputTypes.TextFile)
                 {
                     Console.Write($"Save to current directory? (Y/n): ");
                     string saveChoice = Console.ReadLine()?.Trim().ToLower();
@@ -187,20 +187,20 @@ namespace IronOCR_Demos.Controllers
                 Console.WriteLine("Results:");
                 Console.WriteLine("-".PadRight(30, '-'));
 
-                _pdfReadingDemo.OutputResult(result, outputType.Value, outputPath, outputFileName);
+                _ocrReadingDemo.OutputResult(result, outputType.Value, outputPath, outputFileName);
 
-                if (outputType.Value == PDFReadingDemo.OutputTypes.JSON ||
-                    outputType.Value == PDFReadingDemo.OutputTypes.SearchablePDF ||
-                    outputType.Value == PDFReadingDemo.OutputTypes.TextFile)
+                if (outputType.Value == OcrReadingDemo.OutputTypes.JSON ||
+                    outputType.Value == OcrReadingDemo.OutputTypes.SearchablePDF ||
+                    outputType.Value == OcrReadingDemo.OutputTypes.TextFile)
                 {
                     Console.WriteLine();
 
                     // Determine the file extension based on output type
                     string extension = outputType.Value switch
                     {
-                        PDFReadingDemo.OutputTypes.JSON => ".json",
-                        PDFReadingDemo.OutputTypes.SearchablePDF => ".pdf",
-                        PDFReadingDemo.OutputTypes.TextFile => ".txt",
+                        OcrReadingDemo.OutputTypes.JSON => ".json",
+                        OcrReadingDemo.OutputTypes.SearchablePDF => ".pdf",
+                        OcrReadingDemo.OutputTypes.TextFile => ".txt",
                         _ => ""
                     };
 
@@ -225,7 +225,7 @@ namespace IronOCR_Demos.Controllers
             }
         }
 
-        private PDFReadingDemo.OutputTypes? SelectOutputType()
+        private OcrReadingDemo.OutputTypes? SelectOutputType()
         {
             Console.WriteLine("Select output format:");
             Console.WriteLine("1. Text (console output)");
@@ -241,12 +241,12 @@ namespace IronOCR_Demos.Controllers
 
             return choice switch
             {
-                "1" => PDFReadingDemo.OutputTypes.Text,
-                "2" => PDFReadingDemo.OutputTypes.TextSample,
-                "3" => PDFReadingDemo.OutputTypes.JSON,
-                "4" => PDFReadingDemo.OutputTypes.SearchablePDF,
-                "5" => PDFReadingDemo.OutputTypes.TextFile,
-                "6" => PDFReadingDemo.OutputTypes.HighligtParagraphs,
+                "1" => OcrReadingDemo.OutputTypes.Text,
+                "2" => OcrReadingDemo.OutputTypes.TextSample,
+                "3" => OcrReadingDemo.OutputTypes.JSON,
+                "4" => OcrReadingDemo.OutputTypes.SearchablePDF,
+                "5" => OcrReadingDemo.OutputTypes.TextFile,
+                "6" => OcrReadingDemo.OutputTypes.HighligtParagraphs,
                 "0" => null,
                 _ => null
             };

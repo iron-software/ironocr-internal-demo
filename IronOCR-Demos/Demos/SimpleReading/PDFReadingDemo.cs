@@ -20,7 +20,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace IronOCR_Demos.Demos.SimpleReading
 {
-    internal class PDFReadingDemo
+    internal class OcrReadingDemo
     {
 
 #region Input
@@ -28,6 +28,7 @@ namespace IronOCR_Demos.Demos.SimpleReading
         {
             // Instantiate the OCR engine
             var ocr = new IronTesseract();
+            ocr.Configuration.RenderSearchablePdf = true;
 
             // Add image
             using var imageInput = new OcrImageInput(imagePath);
@@ -42,7 +43,9 @@ namespace IronOCR_Demos.Demos.SimpleReading
         public OcrResult ReadImageFromDrawingImageWithRegionSelection(string imagePath, Rectangle? scanRegion = null)
         {
             // Instantiate IronTesseract
-            IronTesseract ocrTesseract = new IronTesseract();
+            IronTesseract ocr = new IronTesseract();
+            ocr.Configuration.RenderSearchablePdf = true;
+
             // Add image
             OcrImageInput imageInput;
             if (scanRegion != null)
@@ -55,39 +58,33 @@ namespace IronOCR_Demos.Demos.SimpleReading
                 imageInput = new OcrImageInput(imagePath);
             }
             // Perform OCR
-            OcrResult ocrResult = ocrTesseract.Read(imageInput);
+            OcrResult ocrResult = ocr.Read(imageInput);
 
             return ocrResult;
         }
-       
 
-        public OcrResult ReadPdf(PdfDocument pdfPath, Rectangle[] scanRegion = null, bool savePDFROI= true)
+
+        public OcrResult ReadPdf(PdfDocument pdfPath, Rectangle[] scanRegion = null, bool savePDFROI = true)
         {
             // Instantiate the OCR engine
             var ocr = new IronTesseract();
-
+            ocr.Configuration.RenderSearchablePdf = true;
             // Create PDF input with or without scan region
-            using (var pdfInput = scanRegion != null
-                ? new OcrPdfInput(pdfPath,ContentAreas: scanRegion)
-                : new OcrPdfInput(pdfPath))
+            var ocrInput = new OcrInput();
+            //ocrInput.LoadPdf(Document pdfPath, ContentArea: scanRegion);
+
+            if (savePDFROI)
             {
-
-                if (savePDFROI)
-                {
-                    pdfInput.SaveAsImages($"{pdfPath}_ROI.png");
-                }
-
-                // Perform OCR
-                OcrResult ocrResult = ocr.Read(pdfInput);
-                
-
-                // Return the extracted text
-                return ocrResult;
+                ocrInput.SaveAsImages($"{pdfPath}_ROI.png");
             }
-        }
-        #endregion
-        //output types
 
+            // Perform OCR
+            OcrResult ocrResult = ocr.Read(ocrInput);
+
+            // Return the extracted text
+            return ocrResult;
+        }
+        #endregion Input
 
         public void OutputResult(OcrResult ocrResult, OutputTypes typeSlection, string filePath, string fileName)
         {

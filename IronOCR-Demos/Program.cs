@@ -10,7 +10,8 @@ namespace IronOCR_Demos
         static void Main(string[] args)
         {
 
-            License.LicenseKey = Utils.GetLicence();
+            IronOcr.License.LicenseKey = Utils.GetLicence();
+            IronPdf.License.LicenseKey = Utils.GetLicence();
 
             try
             {
