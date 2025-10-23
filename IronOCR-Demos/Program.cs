@@ -13,6 +13,10 @@ namespace IronOCR_Demos
             IronOcr.License.LicenseKey = Utils.GetLicence();
             IronPdf.License.LicenseKey = Utils.GetLicence();
 
+            //Logging enables
+            IronPdf.Logging.Logger.LogFilePath = "Default.log";
+            IronPdf.Logging.Logger.LoggingMode = IronPdf.Logging.Logger.LoggingModes.All;
+
             try
             {
                 // Get the project root directory (3 levels up from bin\Debug\net9.0)

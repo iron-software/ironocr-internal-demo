@@ -8,9 +8,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="Demos\SimpleReading\README.md" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="IronOcr" Version="2025.9.7" />

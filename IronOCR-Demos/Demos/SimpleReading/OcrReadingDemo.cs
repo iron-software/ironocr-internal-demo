@@ -24,22 +24,6 @@ namespace IronOCR_Demos.Demos.SimpleReading
     {
 
 #region Input
-        public OcrResult ReadImageFromDrawingImage(string imagePath, Rectangle scanRegion)
-        {
-            // Instantiate the OCR engine
-            var ocr = new IronTesseract();
-            ocr.Configuration.RenderSearchablePdf = true;
-
-            // Add image
-            using var imageInput = new OcrImageInput(imagePath);
-            // Perform OCR
-            OcrResult result = ocr.Read(imageInput);
-
-            // Return the extracted text
-            return result;
-        }
-
-
         public OcrResult ReadImageFromDrawingImageWithRegionSelection(string imagePath, Rectangle? scanRegion = null)
         {
             // Instantiate IronTesseract
@@ -81,7 +65,6 @@ namespace IronOCR_Demos.Demos.SimpleReading
             // Perform OCR
             OcrResult ocrResult = ocr.Read(ocrInput);
 
-            // Return the extracted text
             return ocrResult;
         }
         #endregion Input
