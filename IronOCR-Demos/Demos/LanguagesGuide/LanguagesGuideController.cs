@@ -26,7 +26,8 @@ public class LanguagesGuideController
 
     public LanguagesGuideController()
     {
-        var projectRoot = Utils.GetProjectRootPath();
+        // Get the project root directory (3 levels up from bin\Debug\net9.0)
+        string projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\"));
         _examplesDir = Path.Combine(projectRoot, "Demos", "LanguagesGuide", "Examples");
         _expectedTextDir = Path.Combine(projectRoot, "Demos", "LanguagesGuide", "ExpectedText");
         _outputDir = Path.Combine(projectRoot, "Output");

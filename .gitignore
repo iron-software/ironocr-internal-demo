@@ -1,8 +1,11 @@
-## Build results
+# Build results
 [Dd]ebug/
+[Dd]ebugPublic/
 [Rr]elease/
+[Rr]eleases/
 x64/
 x86/
+[Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
@@ -11,40 +14,136 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-## Visual Studio
+# Visual Studio cache/options
 .vs/
+.vscode/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-*.rsuser
+*.userprefs
 
-## VS Code
-.vscode/
+# Build outputs
+*.dll
+*.exe
+*.pdb
+*.cache
 
-## Rider
-.idea/
-
-## NuGet
-**/[Pp]ackages/*
+# NuGet
 *.nupkg
+*.snupkg
 **/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
 project.lock.json
+project.fragment.lock.json
+artifacts/
 
-## OS files
-.DS_Store
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Windows
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-## Output reports
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Backup & report files
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+ServiceFabricBackup/
+*.rptproj.bak
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Publish profiles
+PublishProfiles/
+*.pubxml
+*.publishproj
+
+# Azure
+*.azurePubxml
+*.pubxml.user
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JetBrains Rider
+*.sln.iml
+
+# Output reports
 **/Output/
 
-## Test results
-[Tt]est[Rr]esult*/
-*.trx
-
-## Build logs
-*.log
-
-## Application settings with secrets
+# AppSettings files
+appsettings.json
+appsettings.*.json
 appsettings.Development.json
 appsettings.Production.json
+appsettings.Staging.json
