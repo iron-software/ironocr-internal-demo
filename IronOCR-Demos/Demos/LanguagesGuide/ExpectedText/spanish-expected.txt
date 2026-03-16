@@ -1,0 +1,4 @@
+Descripción del Producto
+Nuestra plataforma de reconocimiento óptico de caracteres ofrece una solución completa para el procesamiento de documentos empresariales. Con soporte para más de 125 idiomas, nuestra tecnología garantiza una precisión excepcional en la extracción de texto.
+Las características principales incluyen procesamiento por lotes, detección automática de idioma y generación de documentos PDF con capacidad de búsqueda. Nuestros clientes han reportado una mejora significativa en la eficiencia de sus flujos de trabajo documentales.
+Para obtener más información, póngase en contacto con nuestro equipo de ventas.
