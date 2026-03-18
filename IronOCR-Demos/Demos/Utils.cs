@@ -18,18 +18,22 @@ namespace IronOCR_Demos.Demos
             string configPath = Path.GetFullPath(projectRoot);
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(configPath) // Sets the base path to the project root
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true); // Looks for 'appsettings.json' in project root
+                .SetBasePath(configPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             var configuration = builder.Build();
-            return configuration["IronPDF:Licence"];
+            return configuration["IronSoftware:Licence"];
         }
 
         public static string GetLicence()
         {
             Console.WriteLine("Getting licence");
             string licenseKey = GetLicenseFromConfig();
-            // REPLACE WITH OWN LICENCE KEY
+            if (string.IsNullOrWhiteSpace(licenseKey))
+            {
+                Console.WriteLine("WARNING: No license key found in appsettings.json under 'IronSoftware:Licence'.");
+                Console.WriteLine("OCR output will contain watermark text. See README.md for setup instructions.");
+            }
             return licenseKey;
         }
 

@@ -65,7 +65,7 @@ public class LanguagesGuideController
 
             if (int.TryParse(input, out int choice) && choice >= 1 && choice <= _scenarios.Count)
             {
-                var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText)>();
+                var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)>();
                 var scenarioResult = RunSingleScenario(choice - 1);
                 if (scenarioResult != null)
                 {
@@ -83,7 +83,7 @@ public class LanguagesGuideController
     private void RunAllScenarios()
     {
         Console.WriteLine("\nRunning all scenarios...\n");
-        var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText)>();
+        var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)>();
 
         for (int i = 0; i < _scenarios.Count; i++)
         {
@@ -100,7 +100,7 @@ public class LanguagesGuideController
         }
     }
 
-    private (LanguagesGuideDemo.ScenarioResult Result, string ExpectedText)? RunSingleScenario(int index)
+    private (LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)? RunSingleScenario(int index)
     {
         var scenario = _scenarios[index];
         var pdfPath = Path.Combine(_examplesDir, $"{scenario.Key}-sample.pdf");
@@ -127,11 +127,12 @@ public class LanguagesGuideController
                 _ => throw new InvalidOperationException($"Unknown scenario: {scenario.Key}")
             };
 
-            Console.WriteLine($"Done ({result.ProcessingTime.TotalSeconds:F1}s, confidence: {result.Confidence:F1}%)");
-
             var expectedText = File.Exists(expectedPath) ? File.ReadAllText(expectedPath).Trim() : "(no expected text file)";
+            var accuracy = TextComparer.CalculateAccuracy(result.ExtractedText, expectedText);
 
-            return (result, expectedText);
+            Console.WriteLine($"Done ({result.ProcessingTime.TotalSeconds:F1}s, accuracy: {accuracy:F1}%)");
+
+            return (result, expectedText, accuracy);
         }
         catch (Exception ex)
         {
@@ -142,7 +143,7 @@ public class LanguagesGuideController
 
     // ── HTML Report Generation ─────────────────────────────────────────────
 
-    private void GenerateHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText)> results)
+    private void GenerateHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)> results)
     {
         var reportPath = Path.Combine(_outputDir, $"LanguagesGuide-Report-{DateTime.Now:yyyyMMdd-HHmmss}.html");
         var html = BuildHtmlReport(results);
@@ -162,7 +163,7 @@ public class LanguagesGuideController
         }
     }
 
-    private string BuildHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText)> results)
+    private string BuildHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)> results)
     {
         var sb = new StringBuilder();
 
@@ -187,15 +188,16 @@ public class LanguagesGuideController
         sb.AppendLine("  <section class='summary'>");
         sb.AppendLine("    <h2>Summary</h2>");
         sb.AppendLine("    <table>");
-        sb.AppendLine("      <thead><tr><th>Language</th><th>Script</th><th>Confidence</th><th>Time</th><th>Pages</th></tr></thead>");
+        sb.AppendLine("      <thead><tr><th>Language</th><th>Script</th><th>Accuracy</th><th>Engine Confidence</th><th>Time</th><th>Pages</th></tr></thead>");
         sb.AppendLine("      <tbody>");
-        foreach (var (result, _) in results)
+        foreach (var (result, _, accuracy) in results)
         {
-            var confidenceClass = result.Confidence >= 90 ? "high" : result.Confidence >= 70 ? "medium" : "low";
+            var accuracyClass = accuracy >= 90 ? "high" : accuracy >= 70 ? "medium" : "low";
             sb.AppendLine($"        <tr>");
             sb.AppendLine($"          <td>{Encode(result.LanguageName)}</td>");
             sb.AppendLine($"          <td>{Encode(result.ScriptSystem)}</td>");
-            sb.AppendLine($"          <td class='confidence {confidenceClass}'>{result.Confidence:F1}%</td>");
+            sb.AppendLine($"          <td class='confidence {accuracyClass}'>{accuracy:F1}%</td>");
+            sb.AppendLine($"          <td>{result.Confidence:F1}%</td>");
             sb.AppendLine($"          <td>{result.ProcessingTime.TotalSeconds:F1}s</td>");
             sb.AppendLine($"          <td>{result.PageCount}</td>");
             sb.AppendLine($"        </tr>");
@@ -205,12 +207,12 @@ public class LanguagesGuideController
         sb.AppendLine("  </section>");
 
         // Detailed results per scenario
-        foreach (var (result, expectedText) in results)
+        foreach (var (result, expectedText, accuracy) in results)
         {
-            var confidenceClass = result.Confidence >= 90 ? "high" : result.Confidence >= 70 ? "medium" : "low";
+            var accuracyClass = accuracy >= 90 ? "high" : accuracy >= 70 ? "medium" : "low";
             sb.AppendLine($"  <section class='scenario'>");
-            sb.AppendLine($"    <h2>{Encode(result.LanguageName)} <span class='badge {confidenceClass}'>{result.Confidence:F1}%</span></h2>");
-            sb.AppendLine($"    <p class='meta'>Script: {Encode(result.ScriptSystem)} | Processing time: {result.ProcessingTime.TotalSeconds:F1}s | Pages: {result.PageCount}</p>");
+            sb.AppendLine($"    <h2>{Encode(result.LanguageName)} <span class='badge {accuracyClass}'>{accuracy:F1}%</span></h2>");
+            sb.AppendLine($"    <p class='meta'>Script: {Encode(result.ScriptSystem)} | Engine confidence: {result.Confidence:F1}% | Processing time: {result.ProcessingTime.TotalSeconds:F1}s | Pages: {result.PageCount}</p>");
 
             sb.AppendLine("    <div class='comparison'>");
 
