@@ -14,14 +14,14 @@ public class LanguagesGuideController
     private readonly string _expectedTextDir;
     private readonly string _outputDir;
 
-    // Scenario definitions
-    private readonly List<(string Key, string Label, string Description)> _scenarios = new()
+    // Scenario definitions (InDevelopment = true means the example is not finalized)
+    private readonly List<(string Key, string Label, string Description, bool InDevelopment)> _scenarios = new()
     {
-        ("english",        "English",            "Latin script — baseline"),
-        ("spanish",        "Spanish",            "Latin script — accented characters"),
-        ("chinese",        "Chinese Simplified", "CJK characters"),
-        ("russian",        "Russian",            "Cyrillic script"),
-        ("multi-language", "Multi-Language",      "Mixed scripts — flagship demo"),
+        ("english",        "English",            "Latin script — baseline",            false),
+        ("spanish",        "Spanish",            "Latin script — accented characters",  false),
+        ("chinese",        "Chinese Simplified", "CJK characters",                     true),
+        ("russian",        "Russian",            "Cyrillic script",                    false),
+        ("multi-language", "Multi-Language",      "Mixed scripts — flagship demo",      true),
     };
 
     public LanguagesGuideController()
@@ -47,7 +47,8 @@ public class LanguagesGuideController
 
             for (int i = 0; i < _scenarios.Count; i++)
             {
-                Console.WriteLine($"  {i + 1}. {_scenarios[i].Label,-25} ({_scenarios[i].Description})");
+                var devTag = _scenarios[i].InDevelopment ? " [In Development]" : "";
+                Console.WriteLine($"  {i + 1}. {_scenarios[i].Label,-25} ({_scenarios[i].Description}){devTag}");
             }
             Console.WriteLine($"  {_scenarios.Count + 1}. Run all scenarios");
             Console.WriteLine($"  0. Back to main menu\n");
@@ -65,7 +66,7 @@ public class LanguagesGuideController
 
             if (int.TryParse(input, out int choice) && choice >= 1 && choice <= _scenarios.Count)
             {
-                var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)>();
+                var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy, bool InDevelopment)>();
                 var scenarioResult = RunSingleScenario(choice - 1);
                 if (scenarioResult != null)
                 {
@@ -83,7 +84,7 @@ public class LanguagesGuideController
     private void RunAllScenarios()
     {
         Console.WriteLine("\nRunning all scenarios...\n");
-        var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)>();
+        var results = new List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy, bool InDevelopment)>();
 
         for (int i = 0; i < _scenarios.Count; i++)
         {
@@ -100,7 +101,7 @@ public class LanguagesGuideController
         }
     }
 
-    private (LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)? RunSingleScenario(int index)
+    private (LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy, bool InDevelopment)? RunSingleScenario(int index)
     {
         var scenario = _scenarios[index];
         var pdfPath = Path.Combine(_examplesDir, $"{scenario.Key}-sample.pdf");
@@ -132,7 +133,7 @@ public class LanguagesGuideController
 
             Console.WriteLine($"Done ({result.ProcessingTime.TotalSeconds:F1}s, accuracy: {accuracy:F1}%)");
 
-            return (result, expectedText, accuracy);
+            return (result, expectedText, accuracy, scenario.InDevelopment);
         }
         catch (Exception ex)
         {
@@ -143,7 +144,7 @@ public class LanguagesGuideController
 
     // ── HTML Report Generation ─────────────────────────────────────────────
 
-    private void GenerateHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)> results)
+    private void GenerateHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy, bool InDevelopment)> results)
     {
         var reportPath = Path.Combine(_outputDir, $"LanguagesGuide-Report-{DateTime.Now:yyyyMMdd-HHmmss}.html");
         var html = BuildHtmlReport(results);
@@ -163,7 +164,7 @@ public class LanguagesGuideController
         }
     }
 
-    private string BuildHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy)> results)
+    private string BuildHtmlReport(List<(LanguagesGuideDemo.ScenarioResult Result, string ExpectedText, double Accuracy, bool InDevelopment)> results)
     {
         var sb = new StringBuilder();
 
@@ -190,11 +191,12 @@ public class LanguagesGuideController
         sb.AppendLine("    <table>");
         sb.AppendLine("      <thead><tr><th>Language</th><th>Script</th><th>Accuracy</th><th>Engine Confidence</th><th>Time</th><th>Pages</th></tr></thead>");
         sb.AppendLine("      <tbody>");
-        foreach (var (result, _, accuracy) in results)
+        foreach (var (result, _, accuracy, inDev) in results)
         {
             var accuracyClass = accuracy >= 90 ? "high" : accuracy >= 70 ? "medium" : "low";
+            var devBadge = inDev ? " <span class='badge dev'>In Development</span>" : "";
             sb.AppendLine($"        <tr>");
-            sb.AppendLine($"          <td>{Encode(result.LanguageName)}</td>");
+            sb.AppendLine($"          <td>{Encode(result.LanguageName)}{devBadge}</td>");
             sb.AppendLine($"          <td>{Encode(result.ScriptSystem)}</td>");
             sb.AppendLine($"          <td class='confidence {accuracyClass}'>{accuracy:F1}%</td>");
             sb.AppendLine($"          <td>{result.Confidence:F1}%</td>");
@@ -207,11 +209,12 @@ public class LanguagesGuideController
         sb.AppendLine("  </section>");
 
         // Detailed results per scenario
-        foreach (var (result, expectedText, accuracy) in results)
+        foreach (var (result, expectedText, accuracy, inDev) in results)
         {
             var accuracyClass = accuracy >= 90 ? "high" : accuracy >= 70 ? "medium" : "low";
+            var devBadge = inDev ? " <span class='badge dev'>In Development</span>" : "";
             sb.AppendLine($"  <section class='scenario'>");
-            sb.AppendLine($"    <h2>{Encode(result.LanguageName)} <span class='badge {accuracyClass}'>{accuracy:F1}%</span></h2>");
+            sb.AppendLine($"    <h2>{Encode(result.LanguageName)} <span class='badge {accuracyClass}'>{accuracy:F1}%</span>{devBadge}</h2>");
             sb.AppendLine($"    <p class='meta'>Script: {Encode(result.ScriptSystem)} | Engine confidence: {result.Confidence:F1}% | Processing time: {result.ProcessingTime.TotalSeconds:F1}s | Pages: {result.PageCount}</p>");
 
             sb.AppendLine("    <div class='comparison'>");
@@ -275,6 +278,7 @@ public class LanguagesGuideController
         .badge.high { background: #e8f5e9; color: #2e7d32; }
         .badge.medium { background: #fff8e1; color: #f57f17; }
         .badge.low { background: #ffebee; color: #c62828; }
+        .badge.dev { background: #fff3e0; color: #e65100; }
         .scenario {
             background: white; padding: 24px; border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 24px;
