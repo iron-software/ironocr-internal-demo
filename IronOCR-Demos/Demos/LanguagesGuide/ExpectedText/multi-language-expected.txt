@@ -1,0 +1,9 @@
+Multi-Language Document Sample
+English
+Our optical character recognition platform delivers industry-leading accuracy across multiple languages and document types.
+Español
+Nuestra plataforma de reconocimiento óptico de caracteres ofrece una precisión líder en la industria en múltiples idiomas y tipos de documentos.
+中文
+我们的光学字符识别平台在多种语言和文档类型中提供行业领先的准确性。
+Русский
+Наша платформа оптического распознавания символов обеспечивает лидирующую в отрасли точность на нескольких языках и типах документов.
